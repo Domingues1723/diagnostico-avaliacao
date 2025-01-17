@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornada de Descoberta da Saúde</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background-color: #f0f8ff;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #2c3e50; 
+            text-align: center;
+        }
+        .question { 
+            margin-bottom: 20px; 
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        button { 
+            margin-right: 10px; 
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #result { 
+            margin-top: 20px; 
+            font-weight: bold;
+            padding: 15px;
+            background-color: #e8f6f3;
+            border-radius: 5px;
+        }
+        #nextStep {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Jornada de Descoberta da Saúde</h1>
+        <div id="quiz"></div>
+        <div id="result"></div>
+        <div id="nextStep">
+            <h3>Você está pronto para continuar sua jornada de autoconhecimento?</h3>
+            <button onclick="startNextEvaluation()">Sim, quero saber mais!</button>
+            <button onclick="endEvaluation()">Não, obrigado</button>
+        </div>
+    </div>
+
+    <script>
+        const quiz = {
+            questions: [
+                {
+                    question: "Você tem notado ganho de peso ou dificuldade em perder peso, mesmo diminuindo o consumo de calorias e alimentos?",
+                    options: ["Sim", "Não"],
+                    score: {"Sim": 3, "Não": 0}
+                },
+                {
+                    question: "Você tem percebido um aumento de gordura localizada nos braços, pernas e abdômen?",
+                    options: ["Sim", "Não"],
+                    score: {"Sim": 3, "Não": 0}
+                },
+                {
+                    question: "Você tem tido ansiedade ou mudanças de humor?",
+                    options: ["Sim", "Não"],
+                    score: {"Sim": 3, "Não": 0}
+                },
+                {
+                    question: "Qual foi a média da sua temperatura medida por 5 dias consecutivos?",
+                    options: ["Abaixo de 36,5°C", "Entre 36,5°C e 36,8°C", "Igual ou acima de 36,9°C"],
+                    score: {"Abaixo de 36,5°C": 5, "Entre 36,5°C e 36,8°C": 0, "Igual ou acima de 36,9°C": -5}
+                }
+            ],
+            currentQuestion: 0,
+            score: 0
+        };
+
+        function displayQuestion() {
+            const questionEl = document.getElementById('quiz');
+            const question = quiz.questions[quiz.currentQuestion];
+            let html = `<div class="question">
+                <h3>${question.question}</h3>
+                ${question.options.map(option => `<button onclick="selectOption('${option}')">${option}</button>`).join('')}
+            </div>`;
+            questionEl.innerHTML = html;
+        }
+
+        function selectOption(option) {
+            const question = quiz.questions[quiz.currentQuestion];
+            quiz.score += question.score[option];
+            quiz.currentQuestion++;
+            if (quiz.currentQuestion < quiz.questions.length) {
+                displayQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const resultEl = document.getElementById('result');
+            let message;
+            if (quiz.score >= 8) {
+                message = "Uau! Suas respostas revelam algo muito interessante. Há uma grande chance de que sua tireoide esteja pedindo atenção especial. Não se preocupe, isso é mais comum do que você imagina!\n\nAqui está o que você precisa saber:\n\n1. Sua tireoide é como um maestro para seu corpo. Quando ela não está no seu melhor, muitas coisas podem ficar fora de sintonia.\n\n2. Os sintomas que você descreveu são como pistas em um quebra-cabeça. Juntos, eles apontam para um possível hipotireoidismo.\n\n3. O mais fascinante é que seu corpo e mente estão conectados de maneiras surpreendentes. Sua tireoide faz parte de um trio poderoso chamado TRÍADE 1, junto com seu pâncreas e glândulas adrenais.\n\nO que fazer agora?\n\n• Considere marcar uma consulta com um endocrinologista. Eles são como detetives da saúde e podem ajudar a desvendar esse mistério.\n\n• Lembre-se: conhecimento é poder. Quanto mais você entender sobre seu corpo, melhor poderá cuidar dele.\n\nVocê está no caminho certo para uma jornada incrível de autoconhecimento e bem-estar. Pronto para descobrir mais?";
+            } else if (quiz.score >= 4) {
+                message = "Interessante! Suas respostas mostram que algo está acontecendo em seu corpo. Pode não ser um sinal claro de problemas na tireoide, mas seu corpo está tentando dizer algo.\n\nAqui estão alguns pontos para pensar:\n\n1. Nossos corpos são incrivelmente complexos. Às vezes, pequenas mudanças podem ter grandes impactos.\n\n2. Os sintomas que você mencionou podem estar relacionados à sua tireoide, mas também podem ser parte de um quadro maior.\n\n3. Sabia que sua tireoide trabalha em conjunto com outras partes do seu corpo? É parte de um sistema fascinante chamado TRÍADE 1.\n\nO que você pode fazer:\n\n• Considere conversar com um médico. Eles podem ajudar a juntar as peças desse quebra-cabeça.\n\n• Continue prestando atenção no seu corpo. Você é o melhor especialista em como se sente.\n\nEsta é apenas a ponta do iceberg. Há muito mais para descobrir sobre como seu corpo funciona. Pronto para mergulhar mais fundo?";
+            } else {
+                message = "Ótimo! Parece que sua tireoide está funcionando bem. Mas sabia que isso é apenas uma parte da história da sua saúde?\n\nAqui estão algumas coisas interessantes para pensar:\n\n1. Seu corpo é como uma orquestra, com muitos instrumentos tocando juntos. A tireoide é apenas um deles.\n\n2. Mesmo que você não tenha sinais de problemas na tireoide, há muito mais para explorar sobre sua saúde.\n\n3. Você já ouviu falar da TRÍADE 1? É um conjunto fascinante de sistemas no seu corpo que trabalham juntos.\n\nO que você pode fazer agora:\n\n• Celebre o fato de que sua tireoide parece estar em boa forma!\n\n• Pense em outras áreas da sua saúde que você gostaria de entender melhor.\n\n• Lembre-se, cuidar da saúde é uma jornada contínua de descobertas.\n\nVocê deu o primeiro passo em uma jornada emocionante de autoconhecimento. Pronto para explorar mais sobre o incrível universo que é o seu corpo?";
+            }
+            typeWriter(resultEl, message, 0);
+            setTimeout(() => {
+                document.getElementById('nextStep').style.display = 'block';
+            }, message.length * 20); // Exibe as opções após a mensagem ser digitada
+        }
+
+        function typeWriter(element, text, i) {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(() => typeWriter(element, text, i), 20);
+            }
+        }
+
+        function startNextEvaluation() {
+            alert("Ótimo! Vamos continuar nossa jornada de descobertas. Prepare-se para aprender ainda mais sobre seu corpo e saúde!");
+            // Aqui você pode adicionar lógica para iniciar outra avaliação
+        }
+
+        function endEvaluation() {
+            alert("Obrigado por participar! Lembre-se, cuidar da saúde é uma jornada contínua. Até a próxima!");
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
